@@ -1,8 +1,8 @@
-# Multiplatform Bluetooth serial port communication library
+# Multi-platform Bluetooth serial port communication library
 
 Based on [Bluetooth serial port communication for Node.js](https://github.com/eelcocramer/node-bluetooth-serial-port)
 
-## Prequisites on Linux
+## Prerequisites on Linux
 
 * CMake
 * Needs Bluetooth development packages to build
@@ -10,12 +10,12 @@ Based on [Bluetooth serial port communication for Node.js](https://github.com/ee
 `apt-get install libbluetooth-dev cmake gcc-c++`  
 `zypper install bluez-devel cmake gcc-c++`
 
-## Prequisites on OS X
+## Prerequisites on OS X
 
 * CMake from MacPorts
-* Needs XCode and XCode command line tools installed.
+* Needs XCode and XCode command-line tools installed.
 
-## Prequisites on Windows
+## Prerequisites on Windows
 
 * CMake
 * Visual Studio
@@ -63,13 +63,13 @@ struct device
 {
 	string address; // bluetooth address of the device
 	string name; // name of the device
-	time_t lastSeen; // last time device was seen in the inquiry (windows, osx)
-	time_t lastUsed; // last time device was used (windows)
-	bool connected; // true if device is connected (windows, osx)
-	bool remembered; // true if device is remembered (windows, osx)
-	bool authenticated; // true if device is authenticated (windows, osx)
-	DeviceClass deviceClass; // class of device
-	DeviceClass majorDeviceClass; // major class of device
+	time_t lastSeen; // The last time the device was seen in the inquiry (windows, osx)
+	time_t lastUsed; // The last time the device was used (windows)
+	bool connected; // true if the device is connected (windows, osx)
+	bool remembered; // true if the device is remembered (windows, osx)
+	bool authenticated; // true if the device is authenticated (windows, osx)
+	DeviceClass deviceClass; // class of the device
+	DeviceClass majorDeviceClass; // major class of the device
 	ServiceClass serviceClass; // service class flags
 };
 ```
@@ -80,7 +80,7 @@ library (the code searching for it is at the top of `DeviceINQ::Inquire()` and
 can be modified according to your needs).  The reason for this is that
 `IOBluetoothDeviceInquiry` has the undocumented requirement that the RunLoop of
 the application's main thread be executed.  While almost any GUI application will
-fulfill this requirement, a simple command line tool such as the bundled example
+fulfill this requirement, a simple command-line tool, such as the bundled example,
 won't.  Since we can't just hijack the application's main thread, this is the only
 way to guarantee that the device search functions correctly.
 
@@ -88,7 +88,7 @@ way to guarantee that the device search functions correctly.
 
 Returns serial port channelID for device at given address
 
-* __address__: string containing bluetooth address of the device
+* __address__: string containing the bluetooth address of the device
 
 ```
 Note: This method seems to fail on Windows, use value 1 for channelID instead
@@ -100,7 +100,7 @@ Note: This method seems to fail on Windows, use value 1 for channelID instead
 
 Returns new instance of BTSerialPortBinding object
 
-* __address__: string containint bluetooth address of the device
+* __address__: string containing bluetooth address of the device
 * __channelID__: ID of the serial port channel
 
 ```
@@ -117,10 +117,10 @@ Closes connection to the device
 
 #### BTSerialPortBinding::Read(buffer, length)
 
-Reads data from the device, returns numbe rof bytes read
+Reads data from the device, returns number of bytes read
 
 * __buffer__: pointer to buffer to hold received data
-* __length__: maximum namber of bytes to read
+* __length__: maximum number of bytes to read
 
 #### BTSerialPortBinding::Write(buffer, length)
 
