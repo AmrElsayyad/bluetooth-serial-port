@@ -1,6 +1,7 @@
 #include <string>
 #include <stdlib.h>
 #include <unistd.h>
+#include <unordered_map>
 #include "BluetoothException.h"
 #include "DeviceINQ.h"
 
@@ -26,6 +27,40 @@ extern "C"{
 }
 
 using namespace std;
+
+const unordered_map<string, int> profileIds{
+    {"SDP_SERVER_PROFILE_ID", SDP_SERVER_PROFILE_ID},
+    {"BROWSE_GRP_DESC_PROFILE_ID", BROWSE_GRP_DESC_PROFILE_ID},
+    {"SERIAL_PORT_PROFILE_ID", SERIAL_PORT_PROFILE_ID},
+    {"LAN_ACCESS_PROFILE_ID", LAN_ACCESS_PROFILE_ID},
+    {"DIALUP_NET_PROFILE_ID", DIALUP_NET_PROFILE_ID},
+    {"IRMC_SYNC_PROFILE_ID", IRMC_SYNC_PROFILE_ID},
+    {"OBEX_OBJPUSH_PROFILE_ID", OBEX_OBJPUSH_PROFILE_ID},
+    {"OBEX_FILETRANS_PROFILE_ID", OBEX_FILETRANS_PROFILE_ID},
+    {"IRMC_SYNC_CMD_PROFILE_ID", IRMC_SYNC_CMD_PROFILE_ID},
+    {"HEADSET_PROFILE_ID", HEADSET_PROFILE_ID},
+    {"CORDLESS_TELEPHONY_PROFILE_ID", CORDLESS_TELEPHONY_PROFILE_ID},
+    {"AUDIO_SOURCE_PROFILE_ID", AUDIO_SOURCE_PROFILE_ID},
+    {"AUDIO_SINK_PROFILE_ID", AUDIO_SINK_PROFILE_ID},
+    {"AV_REMOTE_TARGET_PROFILE_ID", AV_REMOTE_TARGET_PROFILE_ID},
+    {"ADVANCED_AUDIO_PROFILE_ID", ADVANCED_AUDIO_PROFILE_ID},
+    {"AV_REMOTE_PROFILE_ID", AV_REMOTE_PROFILE_ID},
+    {"INTERCOM_PROFILE_ID", INTERCOM_PROFILE_ID},
+    {"FAX_PROFILE_ID", FAX_PROFILE_ID},
+    {"HEADSET_AGW_PROFILE_ID", HEADSET_AGW_PROFILE_ID},
+    {"WAP_PROFILE_ID", WAP_PROFILE_ID},
+    {"WAP_CLIENT_PROFILE_ID", WAP_CLIENT_PROFILE_ID},
+    {"PANU_PROFILE_ID", PANU_PROFILE_ID},
+    {"NAP_PROFILE_ID", NAP_PROFILE_ID},
+    {"GN_PROFILE_ID", GN_PROFILE_ID},
+    {"DIRECT_PRINTING_PROFILE_ID", DIRECT_PRINTING_PROFILE_ID},
+    {"REFERENCE_PRINTING_PROFILE_ID", REFERENCE_PRINTING_PROFILE_ID},
+    {"IMAGING_PROFILE_ID", IMAGING_PROFILE_ID},
+    {"IMAGING_RESPONDER_PROFILE_ID", IMAGING_RESPONDER_PROFILE_ID},
+    {"IMAGING_ARCHIVE_PROFILE_ID", IMAGING_ARCHIVE_PROFILE_ID},
+    {"IMAGING_REFOBJS_PROFILE_ID", IMAGING_REFOBJS_PROFILE_ID},
+    {"HANDSFREE_PROFILE_ID", HANDSFREE_PROFILE_ID},
+    {"GENERIC_AUDIO_PROFILE_ID", GENERIC_AUDIO_PROFILE_ID}};
 
 DeviceINQ *DeviceINQ::Create()
 {
@@ -88,7 +123,7 @@ vector<device> DeviceINQ::Inquire(int length)
 	return devices;
 }
 
-int DeviceINQ::SdpSearch(string address)
+int DeviceINQ::SdpSearch(const string& address, const string& profileId)
 {
 	int channelID = -1;
 	uuid_t svc_uuid;
@@ -107,7 +142,7 @@ int DeviceINQ::SdpSearch(string address)
 		throw BluetoothException("no session resurned from sdp_connect");
 
 	// specify the UUID of the application we're searching for
-	sdp_uuid16_create(&svc_uuid, SERIAL_PORT_PROFILE_ID);
+	sdp_uuid16_create(&svc_uuid, profileIds.at(profileId));
 	search_list = sdp_list_append(NULL, &svc_uuid);
 
 	// specify that we want a list of all the matching applications' attributes
@@ -119,7 +154,7 @@ int DeviceINQ::SdpSearch(string address)
 	sdp_list_t *r = response_list;
 
 	// go through each of the service records
-	for (; r; r = r->next)
+	for (; r && channelID < 1; r = r->next)
 	{
 		sdp_record_t *rec = (sdp_record_t*)r->data;
 		sdp_list_t *proto_list;
@@ -130,34 +165,22 @@ int DeviceINQ::SdpSearch(string address)
 			sdp_list_t *p = proto_list;
 
 			// go through each protocol sequence
-			for (; p; p = p->next)
+			for (; p && channelID < 1; p = p->next)
 			{
 				sdp_list_t *pds = (sdp_list_t*)p->data;
 
 				// go through each protocol list of the protocol sequence
-				for (; pds; pds = pds->next)
+				for (; pds && channelID < 1; pds = pds->next)
 				{
 
 					// check the protocol attributes
 					sdp_data_t *d = (sdp_data_t*)pds->data;
-					int proto = 0;
-
-					for (; d; d = d->next)
+					
+					for (; d && channelID < 1; d = d->next)
 					{
-						switch (d->dtd)
-						{
-						case SDP_UUID16:
-						case SDP_UUID32:
-						case SDP_UUID128:
-							proto = sdp_uuid_to_proto(&d->val.uuid);
-							break;
-						case SDP_UINT8:
-							if (proto == RFCOMM_UUID)
-							{
-								channelID = d->val.int8;
-								// TODO: cleanup
-								return channelID; // stop if channel is found
-							}
+						if (d->dtd == SDP_UINT8)
+                        {
+                            channelID = d->val.int8;
 							break;
 						}
 					}

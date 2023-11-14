@@ -1,5 +1,5 @@
+cmake_minimum_required(VERSION 3.5)
 project(bluetoothserialport)
-cmake_minimum_required(VERSION 3.1)
 set (CMAKE_CXX_STANDARD 11)
 
 add_library(bluetoothserialport)
@@ -58,7 +58,8 @@ PUBLIC
 PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR}/src/${PLATFORM}
 )
-add_executable(inquiretest EXCLUDE_FROM_ALL ${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp)
+add_executable(inquiretest ${CMAKE_CURRENT_SOURCE_DIR}/test/inquire.cpp)
+add_executable(connecttest ${CMAKE_CURRENT_SOURCE_DIR}/test/connect.cpp)
 
 set_target_properties(bluetoothserialport
 PROPERTIES
@@ -66,3 +67,4 @@ PROPERTIES
 )
 
 target_link_libraries(inquiretest bluetoothserialport ${FOUNDATION} ${IOBLUETOOTH})
+target_link_libraries(connecttest bluetoothserialport ${FOUNDATION} ${IOBLUETOOTH})

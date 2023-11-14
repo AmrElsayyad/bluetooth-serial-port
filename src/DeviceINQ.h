@@ -31,5 +31,5 @@ public:
 	~DeviceINQ();
 	static DeviceINQ *Create();
 	std::vector<device> Inquire(int length = 8);
-	int SdpSearch(std::string address);
+	int SdpSearch(const std::string& address, const std::string& profileId);
 };
