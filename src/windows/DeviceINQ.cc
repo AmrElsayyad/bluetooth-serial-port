@@ -246,7 +246,7 @@ vector<device> DeviceINQ::Inquire(int length)
 	return devices;
 }
 
-int DeviceINQ::SdpSearch(string address, const std::string& profileId)
+int DeviceINQ::SdpSearch(const string& address, const string& profileId)
 {
 	// Construct windows socket bluetooth variables
 	DWORD flags = LUP_FLUSHCACHE | LUP_RETURN_ADDR;

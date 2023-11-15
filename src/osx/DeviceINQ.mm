@@ -115,7 +115,7 @@ std::vector<device> DeviceINQ::Inquire(int)
     return devices;
 }
 
-int DeviceINQ::SdpSearch(std::string address, const std::string& profileId)
+int DeviceINQ::SdpSearch(const std::string& address, const std::string& profileId)
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSString *addr = [NSString stringWithCString: address.c_str() encoding: NSASCIIStringEncoding];

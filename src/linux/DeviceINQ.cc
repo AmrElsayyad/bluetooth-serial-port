@@ -166,7 +166,7 @@ int DeviceINQ::SdpSearch(const string& address, const string& profileId)
 	session = sdp_connect(&source, &target, SDP_RETRY_IF_BUSY);
 
 	if (!session)
-		throw BluetoothException("no session resurned from sdp_connect");
+		throw BluetoothException("no session returned from sdp_connect");
 
 	// specify the UUID of the application we're searching for
 	sdp_uuid16_create(&svc_uuid, profileIds.at(profileId));
