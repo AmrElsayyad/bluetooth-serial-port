@@ -67,6 +67,30 @@ DeviceINQ::~DeviceINQ()
 		BluetoothHelpers::Finalize();
 }
 
+device DeviceINQ::GetLocalDevice() {
+    BLUETOOTH_DEVICE_INFO deviceInfo;
+    deviceInfo.dwSize = sizeof(BLUETOOTH_DEVICE_INFO);
+
+    HBLUETOOTH_DEVICE_FIND hDeviceFind = BluetoothFindFirstRadio(&deviceInfo);
+    if (hDeviceFind == NULL) {
+        throw BluetoothException("No Bluetooth devices found");
+    }
+
+    wchar_t address[18];
+    wcscpy_s(address, 18, deviceInfo.Address);
+
+    TCHAR name[248];
+    wcscpy_s(name, 248, deviceInfo.szName);
+
+    BluetoothFindDeviceClose(hDeviceFind);
+
+    device localDevice;
+    localDevice.address = WideCharToMultiByte(address);
+    localDevice.name = WideCharToMultiByte(name);
+
+    return localDevice;
+}
+
 vector<device> DeviceINQ::Inquire(int length)
 {
   (void)(length);

@@ -75,6 +75,33 @@ DeviceINQ::~DeviceINQ()
 {
 }
 
+device DeviceINQ::GetLocalDevice() {
+    char addr[19] = { 0 };
+    char name[248] = { 0 };
+    int dev_id = hci_get_route(NULL);
+    int sock = hci_open_dev(dev_id);
+
+    if (dev_id < 0 || sock < 0)
+        throw BluetoothException("error opening socket");
+
+    bdaddr_t localAddress;
+    if (hci_devba(dev_id, &localAddress) < 0) {
+        close(sock);
+        throw BluetoothException("error getting local address");
+    }
+
+    ba2str(&localAddress, addr);
+    hci_read_local_name(sock, sizeof(name), name, 0);
+
+    device localDevice;
+    localDevice.address = std::string(addr);
+    localDevice.name = std::string(name);
+
+    close(sock);
+
+    return localDevice;
+}
+
 vector<device> DeviceINQ::Inquire(int length)
 {
 	char addr[19] = { 0 };

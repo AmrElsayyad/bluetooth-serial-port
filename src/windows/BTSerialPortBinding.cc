@@ -107,7 +107,7 @@ void BTSerialPortBinding::Close()
 	}
 }
 
-int BTSerialPortBinding::Read(char *buffer, int length)
+int BTSerialPortBinding::Read(uint8_t *buffer, int length)
 {
 	if (data->s == INVALID_SOCKET)
 		throw BluetoothException("connection has been closed");
@@ -140,7 +140,7 @@ int BTSerialPortBinding::Read(char *buffer, int length)
 	return size;
 }
 
-void BTSerialPortBinding::Write(const char *buffer, int length)
+void BTSerialPortBinding::Write(const uint8_t *buffer, int length)
 {
 	if (buffer == nullptr)
 		throw BluetoothException("buffer cannot be null");

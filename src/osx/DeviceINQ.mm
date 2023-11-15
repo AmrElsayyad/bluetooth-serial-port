@@ -60,6 +60,18 @@ DeviceINQ::~DeviceINQ()
 {
 }
 
+device DeviceINQ::GetLocalDevice() {
+    IOBluetoothHostController* controller = [IOBluetoothHostController defaultController];
+    NSString* address = [controller addressAsString];
+    NSString* name = [controller name];
+
+    device localDevice;
+    localDevice.address = [address UTF8String];
+    localDevice.name = [name UTF8String];
+
+    return localDevice;
+}
+
 std::vector<device> DeviceINQ::Inquire(int)
 {
     // The helper executable should be in the same directory as this shared object.
@@ -80,7 +92,7 @@ std::vector<device> DeviceINQ::Inquire(int)
     }
     NSFileHandle* fh = pipe.fileHandleForReading;
     NSData* data = [fh readDataToEndOfFile];
-    std::string_view outText((char *)data.bytes, data.length);
+    std::string outText((char *)data.bytes, data.length);
     nlohmann::json jResult = nlohmann::json::parse(outText);
 
     std::vector<device> devices;

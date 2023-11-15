@@ -20,8 +20,8 @@ public:
 	static BTSerialPortBinding *Create(std::string address, int channelID);
 	void Connect();
 	void Close();
-	int Read(char *buffer, int length);
-	void Write(const char *buffer, int length);
+	int Read(uint8_t *buffer, int length);
+	void Write(const uint8_t *buffer, int length);
 	bool IsDataAvailable();
 	//void SetTimeouts(int readTimeout, int writeTimeout);
 };
